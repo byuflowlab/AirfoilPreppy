@@ -25,8 +25,11 @@ from __future__ import print_function
 from math import pi, sin, cos, radians, degrees, tan, ceil, floor
 import numpy as np
 import copy
-# from scipy.interpolate import RectBivariateSpline
-
+from scipy.interpolate import RectBivariateSpline, bisplev
+from akima import Akima
+import sys, copy, csv, subprocess
+import pyXLIGHT
+from airfoil_parameterization import AirfoilAnalysis
 
 
 class Polar(object):
@@ -58,7 +61,6 @@ class Polar(object):
         self.cl = np.array(cl)
         self.cd = np.array(cd)
         self.cm = np.array(cm)
-
 
     def blend(self, other, weight):
         """Blend this polar with another one with the specified weighting
@@ -321,7 +323,10 @@ class Polar(object):
                     pass  # For when it reaches the range of cm's that the user provides
                 else:
                     cm_ext[i] = cm_new
-        cm = np.interp(np.degrees(alpha), alpha_cm, cm_ext)
+        try:
+            cm = np.interp(np.degrees(alpha), alpha_cm, cm_ext)
+        except:
+            cm = np.zeros(len(cl))
         return type(self)(self.Re, np.degrees(alpha), cl, cd, cm)
 
 
@@ -344,13 +349,15 @@ class Polar(object):
 
         found_zero_lift = False
 
-        for i in range(len(self.cm)-1):
-            if abs(self.alpha[i]) < 20.0 and self.cl[i] <= 0 and self.cl[i+1] >= 0:
-                p = -self.cl[i] / (self.cl[i + 1] - self.cl[i])
-                cm0 = self.cm[i] + p * (self.cm[i+1] - self.cm[i])
-                found_zero_lift = True
-                break
-
+        for i in range(len(self.cm)):
+            try:
+                if abs(self.alpha[i]) < 20.0 and self.cl[i] <= 0 and self.cl[i+1] >= 0:
+                    p = -self.cl[i] / (self.cl[i + 1] - self.cl[i])
+                    cm0 = self.cm[i] + p * (self.cm[i+1] - self.cm[i])
+                    found_zero_lift = True
+                    break
+            except:
+                pass
         if not found_zero_lift:
             p = -self.cl[0] / (self.cl[1] - self.cl[0])
             cm0 = self.cm[0] + p * (self.cm[1] - self.cm[0])
@@ -394,8 +401,7 @@ class Polar(object):
             elif alpha[i] == -180:
                 cm_new = 0
             else:
-                print("Angle encountered for which there is no CM table value "
-                      "(near +/-180 deg). Program will stop.")
+                print("Angle encountered for which there is no CM table value (near +/-180 deg). Program will stop.")
         return cm_new
 
     def unsteadyparam(self, alpha_linear_min=-5, alpha_linear_max=5):
@@ -505,7 +511,6 @@ class Polar(object):
 
         return figs
 
-
 class Airfoil(object):
     """A collection of Polar objects at different Reynolds numbers
 
@@ -526,7 +531,6 @@ class Airfoil(object):
 
         # save type of polar we are using
         self.polar_type = polars[0].__class__
-
 
     @classmethod
     def initFromAerodynFile(cls, aerodynFile, polarType=Polar):
@@ -587,7 +591,123 @@ class Airfoil(object):
 
         return cls(polars)
 
+    @classmethod
+    def initFromCoordinateFile(cls, coordinateFile, airfoilOptions, polarType=Polar):
+        """Construct Airfoil object from airfoil coordinate file
 
+        Parameters
+        ----------
+        coordinateFile : array of str
+            paths/names of properly formatted airfoil coordinate files
+
+        alphas : array of floats
+            array of angles of attack
+
+        Re : float
+            Reynolds number
+
+        Returns
+        -------
+        obj : Airfoil
+
+        """
+        # initialize
+        polars = []
+        afanalysis = AirfoilAnalysis(coordinateFile, airfoilOptions, method='coordinateFile')
+        cl, cd, cm, alphas, failure = afanalysis.computeSpline()
+        Re = airfoil_analysis_options['Re']
+        polars.append(polarType(Re, alphas, cl, cd, cm))
+
+        return cls(polars)
+
+    @classmethod
+    def initFromNACA(cls, NACA, airfoilOptions, polarType=Polar):
+        """Construct Airfoil object from airfoil coordinate file
+
+        Parameters
+        ----------
+        NACA : array of str
+            paths/names of properly formatted airfoil coordinate files
+
+        alphas : array of floats
+            array of angles of attack
+
+        Re : float
+            Reynolds number
+
+        Returns
+        -------
+        obj : Airfoil
+
+        """
+        # initialize
+        polars = []
+        afanalysis = AirfoilAnalysis(NACA, airfoilOptions, method='NACA')
+        cl, cd, cm, alphas, failure = afanalysis.computeSpline()
+        Re = airfoil_analysis_options['Re']
+        polars.append(polarType(Re, alphas, cl, cd, cm))
+        return cls(polars)
+
+
+    @classmethod
+    def initFromCST(cls, CST, airfoilOptions, polarType=Polar):
+        """Construct Airfoil object from airfoil coordinate file
+
+        Parameters
+        ----------
+        CST : array of str
+            paths/names of properly formatted airfoil coordinate files
+
+        alphas : array of floats
+            array of angles of attack
+
+        Re : float
+            Reynolds number
+
+        Returns
+        -------
+        obj : Airfoil
+
+        """
+        # initialize
+        polars = []
+        afanalysis = AirfoilAnalysis(CST, airfoilOptions)
+        cl, cd, cm, alphas, failure = afanalysis.computeSpline()
+        # print cl, cd
+        # print
+        Re = airfoil_analysis_options['SplineOptions']['Re']
+        polars.append(polarType(Re, alphas, cl, cd, cm))
+
+        return cls(polars, failure)
+
+    @classmethod
+    def initFromThicknesses(cls, t_c, airfoilOptions, polarType=Polar):
+        """Construct Airfoil object from airfoil coordinate file
+
+        Parameters
+        ----------
+        NACA : array of str
+            paths/names of properly formatted airfoil coordinate files
+
+        alphas : array of floats
+            array of angles of attack
+
+        Re : float
+            Reynolds number
+
+        Returns
+        -------
+        obj : Airfoil
+
+        """
+        # initialize
+        polars = []
+        afanalysis = AirfoilAnalysis(t_c, method='T/C')
+        cl, cd, cm, alphas, failure = afanalysis.computeSpline(airfoil_analysis_options)
+        Re = airfoil_analysis_options['Re']
+        polars.append(polarType(Re, alphas, cl, cd, cm))
+
+        return cls(polars, failure)
 
     def getPolar(self, Re):
         """Gets a Polar object for this airfoil at the specified Reynolds number.
@@ -755,6 +875,9 @@ class Airfoil(object):
         # interpolate each polar to new alpha
         n = len(self.polars)
         polars = [0]*n
+        if n == 1:
+            polars[0] = self.polar_type(p.Re, alpha, p.cl, p.cd, p.cm)
+            return Airfoil(polars)
         for idx, p in enumerate(self.polars):
             cl = np.interp(alpha, p.alpha, p.cl)
             cd = np.interp(alpha, p.alpha, p.cd)
@@ -762,10 +885,6 @@ class Airfoil(object):
             polars[idx] = self.polar_type(p.Re, alpha, cl, cd, cm)
 
         return Airfoil(polars)
-
-
-
-
 
     def writeToAerodynFile(self, filename):
         """Write the airfoil section data to a file using AeroDyn input file style.
@@ -782,24 +901,24 @@ class Airfoil(object):
 
         f = open(filename, 'w')
 
-        f.write('AeroDyn airfoil file.')
-        f.write('Compatible with AeroDyn v13.0.')
-        f.write('Generated by airfoilprep.py')
-        f.write('{0:<10d}\t\t{1:40}'.format(len(af.polars), 'Number of airfoil tables in this file'))
+        print >> f, 'AeroDyn airfoil file.'
+        print >> f, 'Compatible with AeroDyn v13.0.'
+        print >> f, 'Generated by airfoilprep_free.py'
+        print >> f, '{0:<10d}\t\t{1:40}'.format(len(af.polars), 'Number of airfoil tables in this file')
         for p in af.polars:
-            f.write('{0:<10f}\t{1:40}'.format(p.Re/1e6, 'Reynolds number in millions.'))
+            print >> f, '{0:<10f}\t{1:40}'.format(p.Re/1e6, 'Reynolds number in millions.')
             param = p.unsteadyparam()
-            f.write('{0:<10f}\t{1:40}'.format(param[0], 'Control setting'))
-            f.write('{0:<10f}\t{1:40}'.format(param[1], 'Stall angle (deg)'))
-            f.write('{0:<10f}\t{1:40}'.format(param[2], 'Angle of attack for zero Cn for linear Cn curve (deg)'))
-            f.write('{0:<10f}\t{1:40}'.format(param[3], 'Cn slope for zero lift for linear Cn curve (1/rad)'))
-            f.write('{0:<10f}\t{1:40}'.format(param[4], 'Cn at stall value for positive angle of attack for linear Cn curve'))
-            f.write('{0:<10f}\t{1:40}'.format(param[5], 'Cn at stall value for negative angle of attack for linear Cn curve'))
-            f.write('{0:<10f}\t{1:40}'.format(param[6], 'Angle of attack for minimum CD (deg)'))
-            f.write('{0:<10f}\t{1:40}'.format(param[7], 'Minimum CD value'))
+            print >> f, '{0:<10f}\t{1:40}'.format(param[0], 'Control setting')
+            print >> f, '{0:<10f}\t{1:40}'.format(param[1], 'Stall angle (deg)')
+            print >> f, '{0:<10f}\t{1:40}'.format(param[2], 'Angle of attack for zero Cn for linear Cn curve (deg)')
+            print >> f, '{0:<10f}\t{1:40}'.format(param[3], 'Cn slope for zero lift for linear Cn curve (1/rad)')
+            print >> f, '{0:<10f}\t{1:40}'.format(param[4], 'Cn at stall value for positive angle of attack for linear Cn curve')
+            print >> f, '{0:<10f}\t{1:40}'.format(param[5], 'Cn at stall value for negative angle of attack for linear Cn curve')
+            print >> f, '{0:<10f}\t{1:40}'.format(param[6], 'Angle of attack for minimum CD (deg)')
+            print >> f, '{0:<10f}\t{1:40}'.format(param[7], 'Minimum CD value')
             for a, cl, cd, cm in zip(p.alpha, p.cl, p.cd, p.cm):
-                f.write('{:<10f}\t{:<10f}\t{:<10f}\t{:<10f}'.format(a, cl, cd, cm))
-            f.write('EOT')
+                print >> f, '{:<10f}\t{:<10f}\t{:<10f}\t{:<10f}'.format(a, cl, cd, cm)
+            print >> f, 'EOT'
         f.close()
 
 
@@ -820,10 +939,11 @@ class Airfoil(object):
             cd[i, j] is the drag coefficient at alpha[i] and Re[j]
 
         """
-
-        af = self.interpToCommonAlpha()
-        polarList = af.polars
-
+        if len(self.polars) > 1:
+            af = self.interpToCommonAlpha()
+            polarList = af.polars
+        else:
+            polarList = self.polars
         # angle of attack is already same for each polar
         alpha = polarList[0].alpha
 
@@ -842,8 +962,6 @@ class Airfoil(object):
 
 
         return alpha, Re, cl, cd, cm
-
-
 
     def plot(self, single_figure=True):
         """plot cl/cd/cm polars
@@ -875,13 +993,9 @@ class Airfoil(object):
             ax2 = fig2.add_subplot(111)
             figs.append(fig2)
 
-            # loop through all polars to see if we need to generate handles for cm figs
-            for p in self.polars:
-                if p.useCM == True:
-                    fig3 = plt.figure()
-                    ax3 = fig3.add_subplot(111)
-                    figs.append(fig3)
-                    break
+            fig3 = plt.figure()
+            ax3 = fig3.add_subplot(111)
+            figs.append(fig3)
 
             # loop through polars and plot
             for p in self.polars:
@@ -929,60 +1043,8 @@ class Airfoil(object):
                 ax.set_xlabel('angle of attack (deg)')
                 ax.set_ylabel('moment coefficient')
                 ax.legend(loc='best')
-
+        plt.show()
         return figs
-
-    # def evaluate(self, alpha, Re):
-    #     """Get lift/drag coefficient at the specified angle of attack and Reynolds number
-
-    #     Parameters
-    #     ----------
-    #     alpha : float (rad)
-    #         angle of attack (in Radians!)
-    #     Re : float
-    #         Reynolds number
-
-    #     Returns
-    #     -------
-    #     cl : float
-    #         lift coefficient
-    #     cd : float
-    #         drag coefficient
-
-    #     Notes
-    #     -----
-    #     Uses a spline so that output is continuously differentiable
-    #     also uses a small amount of smoothing to help remove spurious multiple solutions
-
-    #     """
-
-    #     # setup spline if necessary
-    #     if self.need_to_setup_spline:
-    #         alpha_v, Re_v, cl_M, cd_M = self.createDataGrid()
-    #         alpha_v = np.radians(alpha_v)
-
-    #         # special case if zero or one Reynolds number (need at least two for bivariate spline)
-    #         if len(Re_v) < 2:
-    #             Re_v = [1e1, 1e15]
-    #             cl_M = np.c_[cl_M, cl_M]
-    #             cd_M = np.c_[cd_M, cd_M]
-
-    #         kx = min(len(alpha_v)-1, 3)
-    #         ky = min(len(Re_v)-1, 3)
-
-    #         self.cl_spline = RectBivariateSpline(alpha_v, Re_v, cl_M, kx=kx, ky=ky, s=0.1)
-    #         self.cd_spline = RectBivariateSpline(alpha_v, Re_v, cd_M, kx=kx, ky=ky, s=0.001)
-    #         self.need_to_setup_spline = False
-
-    #     # evaluate spline --- index to make scalar
-
-    #     cl = self.cl_spline.ev(alpha, Re)[0]
-    #     cd = self.cd_spline.ev(alpha, Re)[0]
-
-    #     return cl, cd
-
-
-
 
 
 
@@ -1143,3 +1205,5 @@ if __name__ == '__main__':
                 plt.text(0.2, 0.8, 'Re = ' + str(p.Re/1e6) + ' million', transform=ax.transAxes)
 
             plt.show()
+
+
