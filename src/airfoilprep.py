@@ -468,48 +468,48 @@ class Polar(object):
         return (0.0, degrees(alphaU), degrees(alpha0), m,
                 cnStallUpper, cnStallLower, alpha[minIdx], cd[minIdx])
 
-    def plot(self):
-        """plot cl/cd/cm polar
-
-        Returns
-        -------
-        figs : list of figure handles
-
-        """
-        import matplotlib.pyplot as plt
-
-        p = self
-
-        figs = []
-
-        # plot cl
-        fig = plt.figure()
-        figs.append(fig)
-        ax = fig.add_subplot(111)
-        plt.plot(p.alpha, p.cl, label='Re = ' + str(p.Re/1e6) + ' million')
-        ax.set_xlabel('angle of attack (deg)')
-        ax.set_ylabel('lift coefficient')
-        ax.legend(loc='best')
-
-        # plot cd
-        fig = plt.figure()
-        figs.append(fig)
-        ax = fig.add_subplot(111)
-        ax.plot(p.alpha, p.cd, label='Re = ' + str(p.Re/1e6) + ' million')
-        ax.set_xlabel('angle of attack (deg)')
-        ax.set_ylabel('drag coefficient')
-        ax.legend(loc='best')
-
-        # plot cm
-        fig = plt.figure()
-        figs.append(fig)
-        ax = fig.add_subplot(111)
-        ax.plot(p.alpha, p.cm, label='Re = ' + str(p.Re/1e6) + ' million')
-        ax.set_xlabel('angle of attack (deg)')
-        ax.set_ylabel('moment coefficient')
-        ax.legend(loc='best')
-
-        return figs
+    # def plot(self):
+    #     """plot cl/cd/cm polar
+    #
+    #     Returns
+    #     -------
+    #     figs : list of figure handles
+    #
+    #     """
+    #     import matplotlib.pyplot as plt
+    #
+    #     p = self
+    #
+    #     figs = []
+    #
+    #     # plot cl
+    #     fig = plt.figure()
+    #     figs.append(fig)
+    #     ax = fig.add_subplot(111)
+    #     plt.plot(p.alpha, p.cl, label='Re = ' + str(p.Re/1e6) + ' million')
+    #     ax.set_xlabel('angle of attack (deg)')
+    #     ax.set_ylabel('lift coefficient')
+    #     ax.legend(loc='best')
+    #
+    #     # plot cd
+    #     fig = plt.figure()
+    #     figs.append(fig)
+    #     ax = fig.add_subplot(111)
+    #     ax.plot(p.alpha, p.cd, label='Re = ' + str(p.Re/1e6) + ' million')
+    #     ax.set_xlabel('angle of attack (deg)')
+    #     ax.set_ylabel('drag coefficient')
+    #     ax.legend(loc='best')
+    #
+    #     # plot cm
+    #     fig = plt.figure()
+    #     figs.append(fig)
+    #     ax = fig.add_subplot(111)
+    #     ax.plot(p.alpha, p.cm, label='Re = ' + str(p.Re/1e6) + ' million')
+    #     ax.set_xlabel('angle of attack (deg)')
+    #     ax.set_ylabel('moment coefficient')
+    #     ax.legend(loc='best')
+    #
+    #     return figs
 
 class Airfoil(object):
     """A collection of Polar objects at different Reynolds numbers
@@ -901,94 +901,94 @@ class Airfoil(object):
 
         return alpha, Re, cl, cd, cm
 
-    def plot(self, single_figure=True):
-        """plot cl/cd/cm polars
-
-        Parameters
-        ----------
-        single_figure : bool
-            True  : plot all cl on the same figure (same for cd,cm)
-            False : plot all cl/cd/cm on separate figures
-
-        Returns
-        -------
-        figs : list of figure handles
-
-        """
-
-        import matplotlib.pyplot as plt
-
-        figs = []
-
-        # if in single figure mode (default)
-        if single_figure:
-            # generate figure handles
-            fig1 = plt.figure()
-            ax1 = fig1.add_subplot(111)
-            figs.append(fig1)
-
-            fig2 = plt.figure()
-            ax2 = fig2.add_subplot(111)
-            figs.append(fig2)
-
-            fig3 = plt.figure()
-            ax3 = fig3.add_subplot(111)
-            figs.append(fig3)
-
-            # loop through polars and plot
-            for p in self.polars:
-                # plot cl
-                ax1.plot(p.alpha, p.cl, label='Re = ' + str(p.Re/1e6) + ' million')
-                ax1.set_xlabel('angle of attack (deg)')
-                ax1.set_ylabel('lift coefficient')
-                ax1.legend(loc='best')
-
-                # plot cd
-                ax2.plot(p.alpha, p.cd, label='Re = ' + str(p.Re/1e6) + ' million')
-                ax2.set_xlabel('angle of attack (deg)')
-                ax2.set_ylabel('drag coefficient')
-                ax2.legend(loc='best')
-
-                # plot cm
-                ax3.plot(p.alpha, p.cm, label='Re = ' + str(p.Re/1e6) + ' million')
-                ax3.set_xlabel('angle of attack (deg)')
-                ax3.set_ylabel('moment coefficient')
-                ax3.legend(loc='best')
-
-        # otherwise, multi figure mode -- plot all on separate figures
-        else:
-            for p in self.polars:
-                fig = plt.figure()
-                figs.append(fig)
-                ax = fig.add_subplot(111)
-                ax.plot(p.alpha, p.cl, label='Re = ' + str(p.Re/1e6) + ' million')
-                ax.set_xlabel('angle of attack (deg)')
-                ax.set_ylabel('lift coefficient')
-                ax.legend(loc='best')
-
-                fig = plt.figure()
-                figs.append(fig)
-                ax = fig.add_subplot(111)
-                ax.plot(p.alpha, p.cd, label='Re = ' + str(p.Re/1e6) + ' million')
-                ax.set_xlabel('angle of attack (deg)')
-                ax.set_ylabel('drag coefficient')
-                ax.legend(loc='best')
-
-                fig = plt.figure()
-                figs.append(fig)
-                ax = fig.add_subplot(111)
-                ax.plot(p.alpha, p.cm, label='Re = ' + str(p.Re/1e6) + ' million')
-                ax.set_xlabel('angle of attack (deg)')
-                ax.set_ylabel('moment coefficient')
-                ax.legend(loc='best')
-        return figs
+    # def plot(self, single_figure=True):
+    #     """plot cl/cd/cm polars
+    #
+    #     Parameters
+    #     ----------
+    #     single_figure : bool
+    #         True  : plot all cl on the same figure (same for cd,cm)
+    #         False : plot all cl/cd/cm on separate figures
+    #
+    #     Returns
+    #     -------
+    #     figs : list of figure handles
+    #
+    #     """
+    #
+    #     import matplotlib.pyplot as plt
+    #
+    #     figs = []
+    #
+    #     # if in single figure mode (default)
+    #     if single_figure:
+    #         # generate figure handles
+    #         fig1 = plt.figure()
+    #         ax1 = fig1.add_subplot(111)
+    #         figs.append(fig1)
+    #
+    #         fig2 = plt.figure()
+    #         ax2 = fig2.add_subplot(111)
+    #         figs.append(fig2)
+    #
+    #         fig3 = plt.figure()
+    #         ax3 = fig3.add_subplot(111)
+    #         figs.append(fig3)
+    #
+    #         # loop through polars and plot
+    #         for p in self.polars:
+    #             # plot cl
+    #             ax1.plot(p.alpha, p.cl, label='Re = ' + str(p.Re/1e6) + ' million')
+    #             ax1.set_xlabel('angle of attack (deg)')
+    #             ax1.set_ylabel('lift coefficient')
+    #             ax1.legend(loc='best')
+    #
+    #             # plot cd
+    #             ax2.plot(p.alpha, p.cd, label='Re = ' + str(p.Re/1e6) + ' million')
+    #             ax2.set_xlabel('angle of attack (deg)')
+    #             ax2.set_ylabel('drag coefficient')
+    #             ax2.legend(loc='best')
+    #
+    #             # plot cm
+    #             ax3.plot(p.alpha, p.cm, label='Re = ' + str(p.Re/1e6) + ' million')
+    #             ax3.set_xlabel('angle of attack (deg)')
+    #             ax3.set_ylabel('moment coefficient')
+    #             ax3.legend(loc='best')
+    #
+    #     # otherwise, multi figure mode -- plot all on separate figures
+    #     else:
+    #         for p in self.polars:
+    #             fig = plt.figure()
+    #             figs.append(fig)
+    #             ax = fig.add_subplot(111)
+    #             ax.plot(p.alpha, p.cl, label='Re = ' + str(p.Re/1e6) + ' million')
+    #             ax.set_xlabel('angle of attack (deg)')
+    #             ax.set_ylabel('lift coefficient')
+    #             ax.legend(loc='best')
+    #
+    #             fig = plt.figure()
+    #             figs.append(fig)
+    #             ax = fig.add_subplot(111)
+    #             ax.plot(p.alpha, p.cd, label='Re = ' + str(p.Re/1e6) + ' million')
+    #             ax.set_xlabel('angle of attack (deg)')
+    #             ax.set_ylabel('drag coefficient')
+    #             ax.legend(loc='best')
+    #
+    #             fig = plt.figure()
+    #             figs.append(fig)
+    #             ax = fig.add_subplot(111)
+    #             ax.plot(p.alpha, p.cm, label='Re = ' + str(p.Re/1e6) + ' million')
+    #             ax.set_xlabel('angle of attack (deg)')
+    #             ax.set_ylabel('moment coefficient')
+    #             ax.legend(loc='best')
+    #     return figs
 
 
 class AirfoilAnalysis:
     """A helper class to generate 2D airfoil coordinates and perform the airfoil analysis
-    
+
     """
-    
+
     def __init__(self, Saf, afOptions=None, airfoilShapeMethod=None, numCoordinates=200, generatePreCompModel=True):
         """Constructor
         prepare airfoil shapes or generate precomputational model
@@ -1243,23 +1243,23 @@ class AirfoilAnalysis:
         self.y = y
         return x, y
 
-    def plotAirfoilShape(self):
-        """ plots airfoil coordinates
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        None
-
-        """
-        import matplotlib.pylab as plt
-        plt.figure()
-        plt.plot(self.x, self.y, 'x')
-        plt.axis('equal')
-        plt.show()
+    # def plotAirfoilShape(self):
+    #     """ plots airfoil coordinates
+    #
+    #     Parameters
+    #     ----------
+    #     None
+    #
+    #     Returns
+    #     -------
+    #     None
+    #
+    #     """
+    #     import matplotlib.pylab as plt
+    #     plt.figure()
+    #     plt.plot(self.x, self.y, 'x')
+    #     plt.axis('equal')
+    #     plt.show()
 
     def getCoordinateDerivatives(self, xl=None, xu=None):
         """ provides geometric gradients with respect to airfoil surface
@@ -2120,7 +2120,7 @@ class AirfoilAnalysis:
             cl, cd = self.spline_evaluate(alpha, Re)
             dcl_dalpha, dcd_dalpha, dcl_dRe, dcd_dRe = self.spline_derivatives(alpha, Re)
             dcl_dSaf, dcd_dSaf = self.afShapeDerivatives(alpha, Re)
-        
+
         return cl, cd, dcl_dalpha, dcl_dRe, dcd_dalpha, dcd_dRe, dcl_dSaf, dcd_dSaf
 
     def afShapeDerivatives(self, alpha, Re):
@@ -2399,76 +2399,76 @@ class AirfoilAnalysis:
 
         return dcl_dalpha, dcl_dSaf, dcd_dalpha, dcd_dSaf
 
-    def plotPreCompModel(self, splineNum=0, bem=False):
-        """ plot the surrogate model
-        Parameters
-        ----------
-        splineNum : int
-            Either 0 or 1 corresponding to the first or second airfoil family
-        bem : bool, optional
-            True - used for the BEM (Blade Element Momentum) method specific for CCBlade
-            False - used elsewhere than the BEM method
-
-        Returns
-        -------
-        None
-
-        """
-        import matplotlib.pylab as plt
-        from matplotlib import cm
-        from mpl_toolkits.mplot3d import Axes3D
-        n = 200
-        thick = np.linspace(self.thick_min, self.thick_max, n)
-        alpha = np.linspace(-np.pi, np.pi, n)
-        CL = np.zeros((n, n))
-        CD = np.zeros((n, n))
-        [X, Y] = np.meshgrid(alpha, thick)
-        for i in range(n):
-            for j in range(n):
-                if splineNum == 0:
-                    if not bem:
-                        CL[i, j] = self.cl_total_spline0.ev(X[i, j], Y[i, j])
-                        CD[i, j] = self.cd_total_spline0.ev(X[i, j], Y[i, j])
-                    else:
-                        CL[i, j] = self.cl_total_spline0_bem.ev(X[i, j], Y[i, j])
-                        CD[i, j] = self.cd_total_spline0_bem.ev(X[i, j], Y[i, j])
-                else:
-                    if not bem:
-                        CL[i, j] = self.cl_total_spline1.ev(X[i, j], Y[i, j])
-                        CD[i, j] = self.cd_total_spline1.ev(X[i, j], Y[i, j])
-                    else:
-                        CL[i, j] = self.cl_total_spline1_bem.ev(X[i, j], Y[i, j])
-                        CD[i, j] = self.cd_total_spline1_bem.ev(X[i, j], Y[i, j])
-        font_size = 14
-        fig4 = plt.figure()
-        ax4 = fig4.gca(projection='3d')
-        surf = ax4.plot_surface(np.degrees(X), Y, CD, rstride=1, cstride=1, cmap=cm.coolwarm,
-        linewidth=0, antialiased=False)
-        plt.xlim(xmin=-180, xmax=180)
-        plt.xticks(np.arange(-180, 180+1, 60.0))
-        plt.yticks(np.arange(0.15, 0.46, 0.10))
-        ax4.set_zlabel(r'$c_d$')
-        plt.xlabel(r'$\alpha$ (deg)')
-        plt.ylabel('t/c (\%)')
-        fig4.colorbar(surf)
-        #plt.savefig('cd_fin_surface.pdf')
-        #plt.savefig('cd_fin_surface.png')
-
-        fig5 = plt.figure()
-        ax5 = fig5.gca(projection='3d')
-        surf2 = ax5.plot_surface(np.degrees(X), Y, CL, rstride=1, cstride=1, cmap=cm.coolwarm,
-        linewidth=0, antialiased=False)
-        fig5.colorbar(surf2)
-        plt.xlim(xmin=-180, xmax=180)
-        plt.xticks(np.arange(-180, 180+1, 60.0))
-        plt.yticks(np.arange(0.15, 0.46, 0.10))
-        ax5.set_zlabel(r'$c_l$')
-        plt.xlabel(r'$\alpha$ (deg)')
-        plt.ylabel('t/c (\%)')
-        #plt.savefig('cl_fin_surface.pdf')
-        #plt.savefig('cl_fin_surface.png')
-
-        plt.show()
+    # def plotPreCompModel(self, splineNum=0, bem=False):
+    #     """ plot the surrogate model
+    #     Parameters
+    #     ----------
+    #     splineNum : int
+    #         Either 0 or 1 corresponding to the first or second airfoil family
+    #     bem : bool, optional
+    #         True - used for the BEM (Blade Element Momentum) method specific for CCBlade
+    #         False - used elsewhere than the BEM method
+    #
+    #     Returns
+    #     -------
+    #     None
+    #
+    #     """
+    #     import matplotlib.pylab as plt
+    #     from matplotlib import cm
+    #     from mpl_toolkits.mplot3d import Axes3D
+    #     n = 200
+    #     thick = np.linspace(self.thick_min, self.thick_max, n)
+    #     alpha = np.linspace(-np.pi, np.pi, n)
+    #     CL = np.zeros((n, n))
+    #     CD = np.zeros((n, n))
+    #     [X, Y] = np.meshgrid(alpha, thick)
+    #     for i in range(n):
+    #         for j in range(n):
+    #             if splineNum == 0:
+    #                 if not bem:
+    #                     CL[i, j] = self.cl_total_spline0.ev(X[i, j], Y[i, j])
+    #                     CD[i, j] = self.cd_total_spline0.ev(X[i, j], Y[i, j])
+    #                 else:
+    #                     CL[i, j] = self.cl_total_spline0_bem.ev(X[i, j], Y[i, j])
+    #                     CD[i, j] = self.cd_total_spline0_bem.ev(X[i, j], Y[i, j])
+    #             else:
+    #                 if not bem:
+    #                     CL[i, j] = self.cl_total_spline1.ev(X[i, j], Y[i, j])
+    #                     CD[i, j] = self.cd_total_spline1.ev(X[i, j], Y[i, j])
+    #                 else:
+    #                     CL[i, j] = self.cl_total_spline1_bem.ev(X[i, j], Y[i, j])
+    #                     CD[i, j] = self.cd_total_spline1_bem.ev(X[i, j], Y[i, j])
+    #     font_size = 14
+    #     fig4 = plt.figure()
+    #     ax4 = fig4.gca(projection='3d')
+    #     surf = ax4.plot_surface(np.degrees(X), Y, CD, rstride=1, cstride=1, cmap=cm.coolwarm,
+    #     linewidth=0, antialiased=False)
+    #     plt.xlim(xmin=-180, xmax=180)
+    #     plt.xticks(np.arange(-180, 180+1, 60.0))
+    #     plt.yticks(np.arange(0.15, 0.46, 0.10))
+    #     ax4.set_zlabel(r'$c_d$')
+    #     plt.xlabel(r'$\alpha$ (deg)')
+    #     plt.ylabel('t/c (\%)')
+    #     fig4.colorbar(surf)
+    #     #plt.savefig('cd_fin_surface.pdf')
+    #     #plt.savefig('cd_fin_surface.png')
+    #
+    #     fig5 = plt.figure()
+    #     ax5 = fig5.gca(projection='3d')
+    #     surf2 = ax5.plot_surface(np.degrees(X), Y, CL, rstride=1, cstride=1, cmap=cm.coolwarm,
+    #     linewidth=0, antialiased=False)
+    #     fig5.colorbar(surf2)
+    #     plt.xlim(xmin=-180, xmax=180)
+    #     plt.xticks(np.arange(-180, 180+1, 60.0))
+    #     plt.yticks(np.arange(0.15, 0.46, 0.10))
+    #     ax5.set_zlabel(r'$c_l$')
+    #     plt.xlabel(r'$\alpha$ (deg)')
+    #     plt.ylabel('t/c (\%)')
+    #     #plt.savefig('cl_fin_surface.pdf')
+    #     #plt.savefig('cl_fin_surface.png')
+    #
+    #     plt.show()
 
     def __generatePreCompModel(self):
         """ Generates the precomputational models
@@ -4681,8 +4681,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     fileOut = args.out
 
-    if args.plot:
-        import matplotlib.pyplot as plt
+    # if args.plot:
+    #     import matplotlib.pyplot as plt
 
     # perform actions
     if args.stall3D is not None:
@@ -4700,30 +4700,30 @@ if __name__ == '__main__':
 
         af3D.writeToAerodynFile(fileOut)
 
-        if args.plot:
-
-            for p, p3D in zip(af.polars, af3D.polars):
-                # plt.figure(figsize=(6.0, 2.6))
-                # plt.subplot(121)
-                plt.figure()
-                plt.plot(p.alpha, p.cl, 'k', label='2D')
-                plt.plot(p3D.alpha, p3D.cl, 'r', label='3D')
-                plt.xlabel('angle of attack (deg)')
-                plt.ylabel('lift coefficient')
-                plt.legend(loc='lower right')
-
-                # plt.subplot(122)
-                plt.figure()
-                plt.plot(p.alpha, p.cd, 'k', label='2D')
-                plt.plot(p3D.alpha, p3D.cd, 'r', label='3D')
-                plt.xlabel('angle of attack (deg)')
-                plt.ylabel('drag coefficient')
-                plt.legend(loc='upper center')
-
-                # plt.tight_layout()
-                # plt.savefig('/Users/sning/Dropbox/NREL/SysEng/airfoilpreppy/docs/images/stall3d.pdf')
-
-            plt.show()
+        # if args.plot:
+        #
+        #     for p, p3D in zip(af.polars, af3D.polars):
+        #         # plt.figure(figsize=(6.0, 2.6))
+        #         # plt.subplot(121)
+        #         plt.figure()
+        #         plt.plot(p.alpha, p.cl, 'k', label='2D')
+        #         plt.plot(p3D.alpha, p3D.cl, 'r', label='3D')
+        #         plt.xlabel('angle of attack (deg)')
+        #         plt.ylabel('lift coefficient')
+        #         plt.legend(loc='lower right')
+        #
+        #         # plt.subplot(122)
+        #         plt.figure()
+        #         plt.plot(p.alpha, p.cd, 'k', label='2D')
+        #         plt.plot(p3D.alpha, p3D.cd, 'r', label='3D')
+        #         plt.xlabel('angle of attack (deg)')
+        #         plt.ylabel('drag coefficient')
+        #         plt.legend(loc='upper center')
+        #
+        #         # plt.tight_layout()
+        #         # plt.savefig('/Users/sning/Dropbox/NREL/SysEng/airfoilpreppy/docs/images/stall3d.pdf')
+        #
+        #     plt.show()
 
 
     elif args.extrap is not None:
@@ -4741,37 +4741,37 @@ if __name__ == '__main__':
 
         afext.writeToAerodynFile(fileOut)
 
-        if args.plot:
-
-            for p, pext in zip(af.polars, afext.polars):
-                # plt.figure(figsize=(6.0, 2.6))
-                # plt.subplot(121)
-                plt.figure()
-                p1, = plt.plot(pext.alpha, pext.cl, 'r')
-                p2, = plt.plot(p.alpha, p.cl, 'k')
-                plt.xlabel('angle of attack (deg)')
-                plt.ylabel('lift coefficient')
-                plt.legend([p2, p1], ['orig', 'extrap'], loc='upper right')
-
-                # plt.subplot(122)
-                plt.figure()
-                p1, = plt.plot(pext.alpha, pext.cd, 'r')
-                p2, = plt.plot(p.alpha, p.cd, 'k')
-                plt.xlabel('angle of attack (deg)')
-                plt.ylabel('drag coefficient')
-                plt.legend([p2, p1], ['orig', 'extrap'], loc='lower right')
-
-                plt.figure()
-                p1, = plt.plot(pext.alpha, pext.cm, 'r')
-                p2, = plt.plot(p.alpha, p.cm, 'k')
-                plt.xlabel('angle of attack (deg)')
-                plt.ylabel('moment coefficient')
-                plt.legend([p2, p1], ['orig', 'extrap'], loc='upper right')
-
-                # plt.tight_layout()
-                # plt.savefig('/Users/sning/Dropbox/NREL/SysEng/airfoilpreppy/docs/images/extrap.pdf')
-
-            plt.show()
+        # if args.plot:
+        #
+        #     for p, pext in zip(af.polars, afext.polars):
+        #         # plt.figure(figsize=(6.0, 2.6))
+        #         # plt.subplot(121)
+        #         plt.figure()
+        #         p1, = plt.plot(pext.alpha, pext.cl, 'r')
+        #         p2, = plt.plot(p.alpha, p.cl, 'k')
+        #         plt.xlabel('angle of attack (deg)')
+        #         plt.ylabel('lift coefficient')
+        #         plt.legend([p2, p1], ['orig', 'extrap'], loc='upper right')
+        #
+        #         # plt.subplot(122)
+        #         plt.figure()
+        #         p1, = plt.plot(pext.alpha, pext.cd, 'r')
+        #         p2, = plt.plot(p.alpha, p.cd, 'k')
+        #         plt.xlabel('angle of attack (deg)')
+        #         plt.ylabel('drag coefficient')
+        #         plt.legend([p2, p1], ['orig', 'extrap'], loc='lower right')
+        #
+        #         plt.figure()
+        #         p1, = plt.plot(pext.alpha, pext.cm, 'r')
+        #         p2, = plt.plot(p.alpha, p.cm, 'k')
+        #         plt.xlabel('angle of attack (deg)')
+        #         plt.ylabel('moment coefficient')
+        #         plt.legend([p2, p1], ['orig', 'extrap'], loc='upper right')
+        #
+        #         # plt.tight_layout()
+        #         # plt.savefig('/Users/sning/Dropbox/NREL/SysEng/airfoilpreppy/docs/images/extrap.pdf')
+        #
+        #     plt.show()
 
 
     elif args.blend is not None:
@@ -4792,30 +4792,28 @@ if __name__ == '__main__':
 
 
 
-        if args.plot:
-
-            for p in afOut.polars:
-                fig = plt.figure()
-                ax = fig.add_subplot(111)
-                plt.plot(p.alpha, p.cl, 'k')
-                plt.xlabel('angle of attack (deg)')
-                plt.ylabel('lift coefficient')
-                plt.text(0.6, 0.2, 'Re = ' + str(p.Re/1e6) + ' million', transform=ax.transAxes)
-
-                fig = plt.figure()
-                ax = fig.add_subplot(111)
-                plt.plot(p.alpha, p.cd, 'k')
-                plt.xlabel('angle of attack (deg)')
-                plt.ylabel('drag coefficient')
-                plt.text(0.2, 0.8, 'Re = ' + str(p.Re/1e6) + ' million', transform=ax.transAxes)
-
-                fig = plt.figure()
-                ax = fig.add_subplot(111)
-                plt.plot(p.alpha, p.cm, 'k')
-                plt.xlabel('angle of attack (deg)')
-                plt.ylabel('moment coefficient')
-                plt.text(0.2, 0.8, 'Re = ' + str(p.Re/1e6) + ' million', transform=ax.transAxes)
-
-            plt.show()
-
-
+        # if args.plot:
+        #
+        #     for p in afOut.polars:
+        #         fig = plt.figure()
+        #         ax = fig.add_subplot(111)
+        #         plt.plot(p.alpha, p.cl, 'k')
+        #         plt.xlabel('angle of attack (deg)')
+        #         plt.ylabel('lift coefficient')
+        #         plt.text(0.6, 0.2, 'Re = ' + str(p.Re/1e6) + ' million', transform=ax.transAxes)
+        #
+        #         fig = plt.figure()
+        #         ax = fig.add_subplot(111)
+        #         plt.plot(p.alpha, p.cd, 'k')
+        #         plt.xlabel('angle of attack (deg)')
+        #         plt.ylabel('drag coefficient')
+        #         plt.text(0.2, 0.8, 'Re = ' + str(p.Re/1e6) + ' million', transform=ax.transAxes)
+        #
+        #         fig = plt.figure()
+        #         ax = fig.add_subplot(111)
+        #         plt.plot(p.alpha, p.cm, 'k')
+        #         plt.xlabel('angle of attack (deg)')
+        #         plt.ylabel('moment coefficient')
+        #         plt.text(0.2, 0.8, 'Re = ' + str(p.Re/1e6) + ' million', transform=ax.transAxes)
+        #
+        #     plt.show()
